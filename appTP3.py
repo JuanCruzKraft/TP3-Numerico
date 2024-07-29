@@ -167,17 +167,24 @@ plt.show()
 ####### Ejercicio E
 entrar = input("Ejecutar ejercicio E (y/n): ")
 if entrar == 'y':
-    print("estas en E")
-    
     ## CONSTANTES
     # cantidad de puntos
-    N = 10 
+    N = input("presionar 'm' para usar 1000 puntos, de lo contrio utilizara 100: ")
+    if N == 'm':
+        N = 1000
+    else:
+        N = 100
+        
+    # limite de la sumatoria
+    sum = input("presionar 'j' para usar 5 puntos contiguos de lo contrario utilizara 3: ")
+    if sum == 'j':
+        sum = 5
+    else:
+        sum = 3
     # vector con los Hs iniciales
     x0 = np.full(N, 1e-10) 
-    # limite de la sumatoria
-    sum = 3 
     # definir cantidad de iteraciones para el metodo
-    iteraciones = 30
+    iteraciones = 15
     
     ### -------- PARA 3 PUNTOS CONTIGUOS --------
     # definir f, recibe un vector de valores de H
@@ -189,12 +196,13 @@ if entrar == 'y':
             CH3COOH /= 1000
             NH4 /= 1000
             if(i+j>=0 and i+j<=N-1):
-                temp += H[i+j] - (Kw/H[i+j]) + ((NH4*H[i+j])/(Ka_amonico + H[i+j])) - (CH3COOH/((Ka_acetico * H[i+j]) + 1))
+                temp += (1/(1+np.abs(j)))*(H[i+j] - (Kw/H[i+j]) + ((NH4*H[i+j])/(Ka_amonico + H[i+j])) - (CH3COOH/((Ka_acetico * H[i+j]) + 1)))
+                
         return temp
     
     ## Definir la derivada de f
     # recibe un H de la columna i
-    def df(H,i):
+    def df(H,i,p):
         # valor en la columna
         CH3COOH = i*0.09 + 1
         NH4     = 10 - i*0.09
@@ -204,11 +212,23 @@ if entrar == 'y':
         # derivada de f
         def f(H):
             return H - (Kw/H) + ((NH4*H)/(Ka_amonico + H)) - (CH3COOH/((Ka_acetico * H) + 1))
+        p = 1/(1+np.abs(p))
         f_derivada = symbolic_derivative(f, 'H')
-        return f_derivada(H)
+        return p * f_derivada(H)
     
     res, i = mS.newtonJacobiano(f, df, x0, N, sum, iteraciones)
     print(f"resultado = {res} en {i} iteraciones")
+    print(f"tamaño de res = {res.size}")
+    res = -np.log10(res)
+    print(res)
+    # graficar
+    x = np.arange(1, N + 1)
+    plt.plot(x,res,'o-', label='pH en cada columna i')
+    plt.xlabel('i')
+    plt.ylabel('pH')
+    plt.title('Grafico de pH x columna')
+    plt.grid(True)
+    plt.show()
         
     
     

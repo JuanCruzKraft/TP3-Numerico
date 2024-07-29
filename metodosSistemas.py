@@ -1,5 +1,8 @@
 import numpy as np
 
+#BORRAR
+import pandas as pd
+
 ## Funcion que determinara los valores de la matriz jacobiana
 def resJ(df, x0, N, sum):
     # lleno la matriz Jacobiana de NxN con ceros
@@ -9,7 +12,7 @@ def resJ(df, x0, N, sum):
     for i in range(N): #filas
         for j in range(-sum,sum+1): #columnas
             if(i+j>=0 and i+j <= N-1):
-                J0[i,i+j] = df(x0[i+j], i+j)
+                J0[i,i+j] = df(x0[i+j], i+j, j)
     return J0
 
 ## Funcion que determinara los valores del vector de funciones F de tamaño N
@@ -32,9 +35,11 @@ def newtonJacobiano(f, df, x0, N, sum, iteraciones):
     for i in range(iteraciones):
         # evaluar J con x0 -> J(x0)
         J0 = resJ(df, x0 ,N, sum)
+        test = pd.DataFrame(J0)
+        test.to_csv('matriz.csv', sep='\t', index=False, header=False)
         
         # evaluar F con x0 -> F(x0)
-        F0 = resF(f,x0)
+        F0 = resF(f,x0,N)
         
         #resolver sistema Ax=b ->J=A b=F
         y0 = np.linalg.solve(J0, -F0).reshape(-1) # metodo de numpy para resolver Ax=b
