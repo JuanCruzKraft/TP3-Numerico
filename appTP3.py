@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sympy as sp
 from sympy.utilities.lambdify import lambdify
+import metodosSistemas as mS
 
 
 # Definimos una función de ejemplo y sus derivadas
@@ -161,3 +162,75 @@ plt.ylabel('pH')
 plt.title('Grafico de pH x columna')
 plt.grid(True)
 plt.show()
+
+
+####### Ejercicio E
+entrar = input("Ejecutar ejercicio E (y/n): ")
+if entrar == 'y':
+    print("estas en E")
+    
+    ## CONSTANTES
+    # cantidad de puntos
+    N = 10 
+    # vector con los Hs iniciales
+    x0 = np.full(N, 1e-10) 
+    # limite de la sumatoria
+    sum = 3 
+    # definir cantidad de iteraciones para el metodo
+    iteraciones = 30
+    
+    ### -------- PARA 3 PUNTOS CONTIGUOS --------
+    # definir f, recibe un vector de valores de H
+    def f(H,i):
+        temp = 0
+        for j in range(-sum, sum+1):
+            CH3COOH = (i+j)*0.09 + 1
+            NH4     = 10 - (i+j)*0.09
+            CH3COOH /= 1000
+            NH4 /= 1000
+            if(i+j>=0 and i+j<=N-1):
+                temp += H[i+j] - (Kw/H[i+j]) + ((NH4*H[i+j])/(Ka_amonico + H[i+j])) - (CH3COOH/((Ka_acetico * H[i+j]) + 1))
+        return temp
+    
+    ## Definir la derivada de f
+    # recibe un H de la columna i
+    def df(H,i):
+        # valor en la columna
+        CH3COOH = i*0.09 + 1
+        NH4     = 10 - i*0.09
+        CH3COOH /= 1000
+        NH4 /= 1000
+        
+        # derivada de f
+        def f(H):
+            return H - (Kw/H) + ((NH4*H)/(Ka_amonico + H)) - (CH3COOH/((Ka_acetico * H) + 1))
+        f_derivada = symbolic_derivative(f, 'H')
+        return f_derivada(H)
+    
+    res, i = mS.newtonJacobiano(f, df, x0, N, sum, iteraciones)
+    print(f"resultado = {res} en {i} iteraciones")
+        
+    
+    
+    
+        
+    
+    
+    
+## https://www.youtube.com/watch?v=_wKiUJEJmgo
+# usar sympy para symbols
+# definir matriz de funciones y simbolos
+# definir la matriz Jacobiana (J)
+
+## inicializar en x0 las condiciones iniciales
+## evaluar el Jacobiano en x0 => np.asarray
+## evaluar F
+
+## resolver el sistema lineal J0[][] * x = F[]
+# usar resolvedor y = np.linalg.solve
+
+# finalmente xn+1 = xn + y
+# x0 = x0 + y
+# siguiente iteracion... -> volver a evaluar F y J0 en x0, resolver sistema y guardarlo en 'y',  volver a repetir
+
+
