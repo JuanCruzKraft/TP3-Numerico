@@ -132,7 +132,6 @@ for i in range(0,10):
     def f(H):
         return H - (Kw/H) + ((NH4*H)/(Ka_amonico + H)) - (CH3COOH/((Ka_acetico * H) + 1))
 
-    
 
     ## alternativa para derivar
     """ def df(H):
