@@ -23,15 +23,16 @@ if entrar == 'y':
 
 
     # Imprimimos raices 
-    rootNS, iterationsNS = mN.newton_secante(f, f_derivada, f_segunda_derivada, x0, x1)
-    print(f"Por Newton-Secante se encontró la raíz: {rootNS}, en {iterationsNS} iteraciones")
+    rootNS, iterationsNS, erroresNS = mN.newton_secante(f, f_derivada, f_segunda_derivada, x0, x1)
+    print(f"Por Newton-Secante se encontró la raíz: {rootNS}, en {iterationsNS} iteraciones. ")
+    print(f"El vector de errores que contiene cada error calculado en cada iteracion es el siguiente: {erroresNS}")
 
-    rootRF, iterationRF = mN.regula_falsi(f, 0.0, 1.5)
-    print(f"Por Regula-Falsi se encontró la raíz: {rootRF}, en {iterationRF} iteraciones")
-
-    rootNR, iterationNR = mN.newton_raphson(f, f_derivada)
-    print(f"Por Newton-Raphson se encontró la raíz: {rootNR}, en {iterationNR} iteraciones")
-
+    rootRF, iterationRF, erroresRF = mN.regula_falsi(f, 0.0, 1.5)
+    print(f"Por Regula-Falsi se encontró la raíz: {rootRF}, en {iterationRF} iteraciones. ")
+    print(f"El vector de errores que contiene cada error calculado en cada iteracion es el siguiente: {erroresRF}")
+    rootNR, iterationNR , erroresNR= mN.newton_raphson(f, f_derivada)
+    print(f"Por Newton-Raphson se encontró la raíz: {rootNR}, en {iterationNR} iteraciones. ")
+    print(f"El vector de errores que contiene cada error calculado en cada iteracion es el siguiente: { erroresNR}")
 
     # Visualización gráfica
     x = np.linspace(-10, 10, 400)  # Ajusta el rango de x para cubrir de -10 a 10
@@ -148,7 +149,7 @@ for i in range(0,10):
     """ print(f"KAacetico-KAamonico: {Ka_acetico} - {Ka_amonico} <-> Kw = {Kw}")
     print(f"CH3COOH = {CH3COOH} -- NH4 = {NH4}") """
 
-    rootH, iterationsH = mN.newton_secante(f, f_derivada, f_segunda_derivada, 1e-10, 2e-10, 1e-10) 
+    rootH, iterationsH , erroresH= mN.newton_secante(f, f_derivada, f_segunda_derivada, 1e-10, 2e-10, 1e-10) 
     pH = -np.log10(rootH)
     print(f"rootH: {rootH}; pH: {pH}; CH3COOH: {CH3COOH}, NH3: {NH4}, ITERACIONES: {iterationsH}")
     resultados.append(pH)

@@ -1,4 +1,5 @@
 def regula_falsi(f, a, b, tol=1e-6, max_iter=100):
+    errores = []
     if f(a) * f(b) >= 0:
         raise ValueError("Inicio y fin deben tener distinto signo.")
     
@@ -7,8 +8,9 @@ def regula_falsi(f, a, b, tol=1e-6, max_iter=100):
         c = b - (f(b) * (b - a)) / (f(b) - f(a))
         
         # Check if the result is within the tolerance
+        errores.append(abs(f(c)))
         if abs(f(c)) < tol:
-            return (c, iteration)
+            return (c, iteration, errores)
         
         # Update the interval
         if f(a) * f(c) < 0:
@@ -19,6 +21,7 @@ def regula_falsi(f, a, b, tol=1e-6, max_iter=100):
     raise RuntimeError("Máximo número de iteraciones.")
 
 def newton_raphson(f, f_derivada, x0=0, tol=1e-6, max_iter=1000):
+    errores = []
     x = x0
     for iteration in range(max_iter):
         fx = f(x)
@@ -28,9 +31,10 @@ def newton_raphson(f, f_derivada, x0=0, tol=1e-6, max_iter=1000):
             raise ValueError("The derivative is zero at x = {}. No solution found.".format(x))
         
         x_new = x - fx / dfx
-        
-        if abs(x_new - x) < tol:
-            return (x_new, iteration)
+        error = abs((x_new - x) / x_new) * 100
+        errores.append(error)
+        if error < tol:
+            return (x_new, iteration, errores)
         
         x = x_new
     
@@ -38,6 +42,7 @@ def newton_raphson(f, f_derivada, x0=0, tol=1e-6, max_iter=1000):
 
 # Implementación del método Newton-Secante con segunda derivada
 def newton_secante(f, f_derivada, f_segunda_derivada, x0, x1, tol=1e-6, max_iter=1000):
+    errores = []
     for i in range(max_iter):
         f0, f1 = f(x0), f(x1)
         df1 = f_derivada(x1)
@@ -45,7 +50,10 @@ def newton_secante(f, f_derivada, f_segunda_derivada, x0, x1, tol=1e-6, max_iter
         alpha = ddf1 / (ddf1 + ddf0)
         mns = (1 - alpha) * df1 + alpha * (f1 - f0) / (x1 - x0)
         x2 = x1 - f1 / mns
-        if abs(x2 - x1) < tol:
-            return x2, i+1
+        error = abs((x2 - x1) / x2) * 100
+        errores.append(error)
+        #if abs(x2 - x1) < tol:
+        if error < tol:
+            return x2, i+1, errores
         x0, x1 = x1, x2
     raise ValueError("No convergió")
